@@ -27,10 +27,18 @@ Registra o que entrou neste repositório vindo de terceiros e toda alteração f
 - Os commits das Fases 01 e 02 foram feitos direto no `main` do `Trading-floor`. A partir desta correção, as alterações vão para um branch próprio.
 - Nenhum código foi copiado do `Tradingfloor` ainda. A cópia começa na Fase 04 e cada arquivo trazido será listado aqui com o commit de origem (`ca0da80`).
 
+## 14/11/2026 — Fases 03 a 05: aplicação Next.js publicada
+
+- Aplicação em `app/`, `components/`, `lib/`, testes em `tests/`, esquema do banco em `supabase/migrations/`.
+- Removido o `index.html` provisório da raiz; a página inicial agora é a do app.
+- Relatório: `docs/FASE_03_05_RELATORIO.md`. Decisões D22 a D28 em `TECHNICAL_DECISIONS.md`.
+
 ## Situação das skills em relação à aplicação
 
 As skills em `.claude/skills/` são material de referência e ferramentas do assistente de desenvolvimento. A aplicação não importa nenhuma delas. Conforme `SKILLS_AUDIT.md`, nenhuma será usada como está.
 
 ## Código portado
 
-Nenhum até esta data.
+| Arquivo novo | Origem | Alterações |
+| --- | --- | --- |
+| `lib/vision.ts` | `cloudflare/src/vision.ts` do `Tradingfloor`, commit `ca0da80` | Mantidos a validação da entrada e o tratamento de erros. Trocado Gemini por Claude API; removida a conferência com a Binance; acrescentados critérios, sinal sugerido e o validador `decideSignal`; limite de imagem reduzido para 3 MB |

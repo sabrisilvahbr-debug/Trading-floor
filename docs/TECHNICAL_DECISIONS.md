@@ -88,14 +88,32 @@ Plano gratuito no início. Ele pausa o projeto após 7 dias sem uso; o plano Pro
 
 O Master Prompt 2.0 é mais recente que a decisão de 11/11 do `Tradingfloor`. O módulo de visão terá o provedor isolado em um arquivo, para permitir troca.
 
-### D22 — Biblioteca de gráficos · Pendente
+### D22 — Biblioteca de gráficos · Adotada a recomendação (14/11)
 
 A decisão de 11/11 no `Tradingfloor` proíbe TradingView e Lightweight Charts; o Master Prompt 2.0 lista Lightweight Charts. Recomendação: manter os gráficos próprios, que já existem e funcionam.
 
-### D23 — Escritório 3D · Pendente
+### D23 — Escritório 3D · Adotada a recomendação (14/11)
 
 Não é citado no Master Prompt 2.0 e pesa no celular. Recomendação: fora da primeira versão; continua disponível no `Tradingfloor`.
 
-### D24 — Componentes de interface · Pendente
+### D24 — Componentes de interface · Adiada (14/11)
 
 O Master Prompt pede shadcn/ui; o `Tradingfloor` tem componentes próprios. Recomendação: adotar shadcn/ui nas telas novas e migrar os painéis trazidos aos poucos.
+
+Em 14/11, ao autorizar as Fases 03 a 05, a primeira versão foi feita com componentes próprios e CSS simples, sem shadcn/ui, para publicar mais rápido. A adoção do shadcn/ui pode ser feita depois sem mudar as regras do sistema.
+
+### D25 — Código de acesso na análise · Decidida (14/11)
+
+O site é público e cada análise custa dinheiro na Claude API. Até o login com Supabase existir, a rota `/api/analyze` só responde a quem envia o código definido em `APP_ACCESS_CODE`. Sem essa variável, a análise fica desligada.
+
+### D26 — Dados no aparelho até o Supabase · Decidida (14/11)
+
+Análises, simulações e ajustes ficam no navegador (localStorage). O esquema do banco já está em `supabase/migrations/0001_init.sql`, com regra de acesso por linha, para ser aplicado quando o projeto Supabase for criado.
+
+### D27 — Validador determinístico do sinal · Decidida (14/11)
+
+A IA descreve a imagem e lista critérios; o código decide. Só sai COMPRA ou VENDA com imagem legível, confiança de pelo menos 60%, pelo menos 3 critérios a favor, no máximo 1 contra e diferença de pelo menos 2. Qualquer outro caso é NEUTRO. Os números ficam em `lib/vision.ts` (`RULES`).
+
+### D28 — Resultado da simulação marcado pelo usuário · Decidida (14/11)
+
+Não existe cotação pública de ativos OTC. O app não busca preço em outra fonte; o usuário marca acerto, erro ou empate olhando a plataforma.

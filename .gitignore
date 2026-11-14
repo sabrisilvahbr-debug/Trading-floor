@@ -3,3 +3,11 @@ trader/*
 !trader/config.json
 __pycache__/
 .env
+
+# aplicação Next.js
+node_modules/
+.next/
+out/
+.vercel/
+.env*.local
+*.tsbuildinfo

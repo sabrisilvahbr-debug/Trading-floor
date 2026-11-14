@@ -13,24 +13,24 @@ Três serviços: Vercel (hospedagem), Supabase (login e banco) e Anthropic (Clau
 | Supabase | Não verificado. Não há conexão nesta sessão |
 | Anthropic (Claude API) | Não verificado. Ter o Claude no navegador não é o mesmo que ter conta de API |
 
-## 1. Vercel — Fase 05
+## 1. Vercel — ligar a análise (feito pela Fase 05)
 
-Você já tem conta. Quando chegarmos à Fase 05:
+O app já está publicado em https://tradingo-floor.vercel.app, no projeto `tradingo-floor`. Cada envio para o `main` do GitHub publica uma nova versão sozinho. Falta só você cadastrar duas variáveis:
 
-1. Entre em vercel.com com a conta do GitHub `sabrisilvahbr-debug`.
-2. Se o projeto `tradingo-floor` já aparecer na sua lista da Vercel, abra-o e pule para o passo 4; não importe o repositório de novo. Caso contrário, clique em **Add New** e depois em **Project**.
-3. Na lista de repositórios, escolha **Trading-floor** (com hífen) e clique em **Import**.
-   - Se ele não aparecer, clique em **Adjust GitHub App Permissions** e libere o repositório.
-4. Antes de publicar, abra **Environment Variables** e adicione as variáveis listadas em `ARCHITECTURE.md`, seção 8.
-5. Clique em **Deploy**.
+1. Entre em vercel.com, abra o projeto **tradingo-floor**.
+2. Vá em **Settings** → **Environment Variables**.
+3. Adicione `APP_ACCESS_CODE` com um código que só você saiba (uma frase longa serve). Marque **Production** e **Preview**.
+4. Adicione `ANTHROPIC_API_KEY` com a chave criada no passo 3 deste guia. Marque **Production** e **Preview**.
+5. Vá em **Deployments**, abra o último, clique nos três pontos e em **Redeploy**. Variáveis novas só valem depois de publicar de novo.
+6. No app, abra **Ajustes** e digite o mesmo código de acesso.
 
-Depois disso, cada envio de código para o GitHub publica uma nova versão sozinho.
+`VISION_MODEL` é opcional (padrão `claude-sonnet-5-5`).
 
 **Plano:** o gratuito (Hobby) só permite uso pessoal, sem fins comerciais. Com outros usuários ou cobrança, é preciso o Pro, de US$ 20 por usuário por mês.
 
-**Atenção:** existem dois projetos antigos com nome parecido (`tradingfloor`). Eles pertencem ao outro repositório e não devem ser apagados nem reutilizados. O projeto `tradingo-floor` é o que está ligado ao `Trading-floor`. Ele tem o nome com "o" a mais, escolha mantida de propósito. Ao ser criado, a Vercel já gerou um deploy de preview a partir do `main`, com estado READY. Esse deploy não é de produção (`live: false`). Como o repositório ainda não tem aplicação, o endereço dele deve mostrar erro 404 até a Fase 05. A página não foi aberta, porque tem proteção de login da Vercel. Ainda não foi decidido se ele continua ligado ao GitHub enquanto isso.
+**Atenção:** os projetos `tradingfloor` e `tradingfloor-57dr` pertencem ao outro repositório e não devem ser apagados nem reutilizados. O projeto `tradingo-floor` (com "o" a mais, nome mantido de propósito) é o deste repositório; o anterior, `trading-floorby`, foi excluído.
 
-## 2. Supabase — Fase 04
+## 2. Supabase — quando for ligar o login
 
 1. Entre em supabase.com e clique em **Start your project**.
 2. Entre com a conta do GitHub.
@@ -45,10 +45,13 @@ Depois disso, cada envio de código para o GitHub publica uma nova versão sozin
    - chave **anon** (pública)
    - chave **service_role** (secreta: dá acesso total ao banco)
 7. Esses três valores serão colados por você nas variáveis de ambiente da Vercel.
+8. Em **SQL Editor**, cole e rode o conteúdo de `supabase/migrations/0001_init.sql`. Ele cria as tabelas com regra de acesso por usuário.
+
+O login no app ainda não está ligado; isso será feito na próxima fase de desenvolvimento.
 
 **Plano:** o gratuito custa US$ 0 e serve para começar. Segundo as páginas de preço consultadas em novembro de 2026, ele tem 500 MB de banco e **pausa o projeto depois de 7 dias sem uso**. O Pro parte de US$ 25 por mês. Confira em supabase.com/pricing antes de decidir.
 
-## 3. Anthropic (Claude API) — Fase 06
+## 3. Anthropic (Claude API) — necessária para a análise
 
 A API é paga por uso e separada da assinatura do Claude.
 
