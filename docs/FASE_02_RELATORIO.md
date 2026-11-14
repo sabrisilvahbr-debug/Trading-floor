@@ -32,7 +32,7 @@ Fechar tecnologias, banco, estrutura e dependências, considerando suas resposta
 | Worker TypeScript do `Tradingfloor` | 39 aprovados |
 | Tipos e compilação do painel do `Tradingfloor` | Sem erros |
 | Tipos do Worker TypeScript do `Tradingfloor` | Falha (TS2688): falta `worker-configuration.d.ts`; `wrangler types` gera o arquivo. Não corrigido |
-| Conta Vercel | Existe e está ligada a esta sessão. Projeto `trading-floorby` ligado ao `Trading-floor`, criado em 14/11/2026, sem aplicação ainda |
+| Conta Vercel | Existe e está ligada a esta sessão. Projeto `tradingo-floor` ligado ao `Trading-floor`, criado em 14/11/2026, sem aplicação ainda. O projeto anterior, `trading-floorby`, foi excluído |
 
 ## O que o reaproveitamento adianta
 
@@ -48,7 +48,7 @@ Fechar tecnologias, banco, estrutura e dependências, considerando suas resposta
 - Supabase e Anthropic não foram verificados: não há conexão com eles nesta sessão.
 - Os termos de uso da Homebroker continuam sem leitura (o site recusa leitura automática).
 - Não foi verificado o que está publicado hoje nos projetos `tradingfloor` da Vercel.
-- O projeto `trading-floorby` não tem aplicação para publicar até a Fase 05; o endereço dele deve dar 404. Não foi confirmado pelo log do deploy.
+- O projeto `tradingo-floor` não tem aplicação para publicar até a Fase 05. A Vercel criou um deploy de preview a partir do `main` (estado READY, não é produção). O endereço deve dar 404; não foi confirmado, porque a página tem proteção de login.
 - Um branch criado por engano continua no `Tradingfloor` (ver `TRADINGFLOOR_AUDIT.md`). A remoção precisa ser feita no GitHub.
 
 ## Cronograma revisto
