@@ -1,0 +1,5 @@
+# day-trader-skill: arquivos gerados em trader/ (mantém só a configuração)
+trader/*
+!trader/config.json
+__pycache__/
+.env
