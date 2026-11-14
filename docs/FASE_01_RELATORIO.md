@@ -195,7 +195,7 @@ Total estimado: 25 a 35 sessões. A Fase 06, prioridade número 1 do Master Prom
 - [x] Arquitetura de análise rápida proposta
 - [x] Custos, riscos e cronograma apresentados
 - [ ] Leitura dos termos de uso da Homebroker (o site recusou a leitura automática)
-- [ ] Preço do banco gerenciado conferido
+- [x] Preço do banco gerenciado conferido na Fase 02 (ver `SETUP_CONTAS.md`)
 
 ## 11. Perguntas para iniciar a Fase 02
 

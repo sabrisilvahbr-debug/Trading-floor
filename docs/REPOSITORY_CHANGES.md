@@ -19,6 +19,12 @@ Registra o que entrou neste repositório vindo de terceiros e toda alteração f
 - `docs/SKILLS_AUDIT.md`, `docs/SKILLS_ADAPTATION.md`, `docs/REPOSITORY_CHANGES.md`, `docs/TECHNICAL_DECISIONS.md`, `docs/FASE_01_RELATORIO.md`.
 - Nenhum código de aplicação foi criado nesta fase.
 
+## 14/11/2026 — Fase 02: auditoria do Tradingfloor e arquitetura
+
+- `docs/TRADINGFLOOR_AUDIT.md`, `docs/ARCHITECTURE.md`, `docs/SETUP_CONTAS.md`, `docs/FASE_02_RELATORIO.md`; decisões D14 a D24 em `docs/TECHNICAL_DECISIONS.md`.
+- O repositório `Tradingfloor` foi lido e testado em uma cópia separada. Nenhum arquivo dele foi alterado.
+- Nenhum código foi copiado do `Tradingfloor` ainda. A cópia começa na Fase 04 e cada arquivo trazido será listado aqui com o commit de origem (`ca0da80`).
+
 ## Situação das skills em relação à aplicação
 
 As skills em `.claude/skills/` são material de referência e ferramentas do assistente de desenvolvimento. A aplicação não importa nenhuma delas. Conforme `SKILLS_AUDIT.md`, nenhuma será usada como está.

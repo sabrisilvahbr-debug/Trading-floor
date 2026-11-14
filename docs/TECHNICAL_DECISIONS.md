@@ -53,3 +53,49 @@ Começar pelo modelo mais rápido e barato e comparar com o intermediário em um
 ## D13 — Martingale fora do padrão · Decidida
 
 Não será estratégia padrão nem sugerida. Os limites de risco ficam em configuração administrativa que os agentes não alteram.
+
+## Fase 02 — 14/11/2026
+
+### D14 — Trading-floor é o repositório oficial; Tradingfloor fica intacto · Decidida
+
+São repositórios diferentes. O código útil do `Tradingfloor` é copiado para cá com a origem registrada. Nada é apagado nem alterado lá. Ver `TRADINGFLOOR_AUDIT.md`.
+
+### D15 — Reaproveitar a versão TypeScript, não a Python · Decidida
+
+O `Tradingfloor` tem os mesmos cálculos em Python e em TypeScript, com paridade testada. A Vercel roda TypeScript no mesmo projeto do painel, então a versão TypeScript é a que entra. Isso confirma D03: sem FastAPI no início.
+
+### D16 — Modo real da Binance não é trazido · Decidida
+
+O Master Prompt proíbe operações reais. O código de `backend/live_trading` fica só no `Tradingfloor`.
+
+### D17 — Dados da Binance não entram na primeira versão · Decidida
+
+São cotações de cripto em mercado real. Não podem ser usadas como cotação OTC. Podem voltar depois como fonte separada e rotulada.
+
+### D18 — Arquitetura preparada para vários usuários e planos · Decidida
+
+Login, dono de cada registro, regra de acesso por linha, tabela de planos e contador de uso desde a Fase 04. Cobrança fica para depois.
+
+### D19 — Expirações e payout sem valor padrão · Decidida
+
+Ficam vazios até o usuário informar o que a plataforma mostra. Sem payout informado, o sistema não calcula ponto de equilíbrio nem expectativa.
+
+### D20 — Supabase para login e banco · Decidida (substitui D11)
+
+Plano gratuito no início. Ele pausa o projeto após 7 dias sem uso; o plano Pro parte de US$ 25 por mês.
+
+### D21 — Claude API no lugar do Gemini · Decidida
+
+O Master Prompt 2.0 é mais recente que a decisão de 11/11 do `Tradingfloor`. O módulo de visão terá o provedor isolado em um arquivo, para permitir troca.
+
+### D22 — Biblioteca de gráficos · Pendente
+
+A decisão de 11/11 no `Tradingfloor` proíbe TradingView e Lightweight Charts; o Master Prompt 2.0 lista Lightweight Charts. Recomendação: manter os gráficos próprios, que já existem e funcionam.
+
+### D23 — Escritório 3D · Pendente
+
+Não é citado no Master Prompt 2.0 e pesa no celular. Recomendação: fora da primeira versão; continua disponível no `Tradingfloor`.
+
+### D24 — Componentes de interface · Pendente
+
+O Master Prompt pede shadcn/ui; o `Tradingfloor` tem componentes próprios. Recomendação: adotar shadcn/ui nas telas novas e migrar os painéis trazidos aos poucos.
