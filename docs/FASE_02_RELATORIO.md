@@ -31,7 +31,8 @@ Fechar tecnologias, banco, estrutura e dependências, considerando suas resposta
 | Backend Python do `Tradingfloor` | 100 aprovados, 1 pulado (exige PostgreSQL) |
 | Worker TypeScript do `Tradingfloor` | 39 aprovados |
 | Tipos e compilação do painel do `Tradingfloor` | Sem erros |
-| Conta Vercel | Existe, ligada a esta sessão |
+| Tipos do Worker TypeScript do `Tradingfloor` | Falha (TS2688): falta `worker-configuration.d.ts`; `wrangler types` gera o arquivo. Não corrigido |
+| Conta Vercel | Existe e está ligada a esta sessão. Projeto `trading-floorby` ligado ao `Trading-floor`, criado em 14/11/2026, sem aplicação ainda |
 
 ## O que o reaproveitamento adianta
 
@@ -47,6 +48,8 @@ Fechar tecnologias, banco, estrutura e dependências, considerando suas resposta
 - Supabase e Anthropic não foram verificados: não há conexão com eles nesta sessão.
 - Os termos de uso da Homebroker continuam sem leitura (o site recusa leitura automática).
 - Não foi verificado o que está publicado hoje nos projetos `tradingfloor` da Vercel.
+- O projeto `trading-floorby` não tem aplicação para publicar até a Fase 05; o endereço dele deve dar 404. Não foi confirmado pelo log do deploy.
+- Um branch criado por engano continua no `Tradingfloor` (ver `TRADINGFLOOR_AUDIT.md`). A remoção precisa ser feita no GitHub.
 
 ## Cronograma revisto
 
@@ -64,7 +67,7 @@ Estimativas, não compromisso.
 ## Critérios de conclusão da Fase 02
 
 - [x] Repositórios conferidos
-- [x] `Tradingfloor` auditado sem modificação
+- [x] `Tradingfloor` auditado; o `main` não foi modificado
 - [x] Arquitetura, banco e estrutura de pastas definidos
 - [x] Dependências listadas
 - [x] Configuração de expiração e payout prevista sem valor padrão
