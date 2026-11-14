@@ -141,7 +141,7 @@ As versões exatas serão fixadas na Fase 04, no momento da instalação.
 | `ANTHROPIC_API_KEY` | Vercel | **Não** |
 | `VISION_MODEL` | Vercel | Não |
 
-Nenhuma delas vai para o GitHub nem para o chat. O repositório é público.
+Nenhuma delas vai para o GitHub nem para o chat. O repositório `Trading-floor` é público, conferido pela API do GitHub em 14/11/2026.
 
 ## 9. Segurança
 

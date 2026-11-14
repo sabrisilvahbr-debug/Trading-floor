@@ -9,7 +9,7 @@ Três serviços: Vercel (hospedagem), Supabase (login e banco) e Anthropic (Clau
 | Serviço | Situação |
 | --- | --- |
 | GitHub | Conta `sabrisilvahbr-debug`, repositório `Trading-floor` com acesso de escrita |
-| Vercel | **Conta existe e está ligada a esta sessão.** Já tem projetos chamados `tradingfloor` e `tradingfloor-57dr`. O `Trading-floor` ainda não foi importado |
+| Vercel | **Conta existe e está ligada a esta sessão.** Tem os projetos `tradingfloor` e `tradingfloor-57dr`, do outro repositório, e o projeto `tradingo-floor`, ligado ao `Trading-floor` e criado em 14/11/2026 por volta das 13:47, ainda sem aplicação. O projeto anterior, `trading-floorby`, foi excluído |
 | Supabase | Não verificado. Não há conexão nesta sessão |
 | Anthropic (Claude API) | Não verificado. Ter o Claude no navegador não é o mesmo que ter conta de API |
 
@@ -18,7 +18,7 @@ Três serviços: Vercel (hospedagem), Supabase (login e banco) e Anthropic (Clau
 Você já tem conta. Quando chegarmos à Fase 05:
 
 1. Entre em vercel.com com a conta do GitHub `sabrisilvahbr-debug`.
-2. Clique em **Add New** e depois em **Project**.
+2. Se o projeto `tradingo-floor` já aparecer na sua lista da Vercel, abra-o e pule para o passo 4; não importe o repositório de novo. Caso contrário, clique em **Add New** e depois em **Project**.
 3. Na lista de repositórios, escolha **Trading-floor** (com hífen) e clique em **Import**.
    - Se ele não aparecer, clique em **Adjust GitHub App Permissions** e libere o repositório.
 4. Antes de publicar, abra **Environment Variables** e adicione as variáveis listadas em `ARCHITECTURE.md`, seção 8.
@@ -28,7 +28,7 @@ Depois disso, cada envio de código para o GitHub publica uma nova versão sozin
 
 **Plano:** o gratuito (Hobby) só permite uso pessoal, sem fins comerciais. Com outros usuários ou cobrança, é preciso o Pro, de US$ 20 por usuário por mês.
 
-**Atenção:** existem dois projetos antigos com nome parecido (`tradingfloor`). Eles pertencem ao outro repositório e não devem ser apagados nem reutilizados.
+**Atenção:** existem dois projetos antigos com nome parecido (`tradingfloor`). Eles pertencem ao outro repositório e não devem ser apagados nem reutilizados. O projeto `tradingo-floor` é o que está ligado ao `Trading-floor`. Ele tem o nome com "o" a mais, escolha mantida de propósito. Ao ser criado, a Vercel já gerou um deploy de preview a partir do `main`, com estado READY. Esse deploy não é de produção (`live: false`). Como o repositório ainda não tem aplicação, o endereço dele deve mostrar erro 404 até a Fase 05. A página não foi aberta, porque tem proteção de login da Vercel. Ainda não foi decidido se ele continua ligado ao GitHub enquanto isso.
 
 ## 2. Supabase — Fase 04
 

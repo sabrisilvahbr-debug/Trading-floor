@@ -1,6 +1,6 @@
 # Auditoria do repositório Tradingfloor
 
-Auditoria somente de leitura, feita em 14/11/2026 antes de qualquer reaproveitamento. Nenhum arquivo do `Tradingfloor` foi modificado. Os testes rodaram em uma cópia separada.
+Auditoria somente de leitura, feita em 14/11/2026 antes de qualquer reaproveitamento. O `main` do `Tradingfloor` não foi modificado; os testes rodaram em uma cópia separada. Um branch criado por engano no `Tradingfloor` ainda existe (ver seção 1).
 
 ## 1. São dois repositórios diferentes
 
@@ -10,7 +10,7 @@ Auditoria somente de leitura, feita em 14/11/2026 antes de qualquer reaproveitam
 | Situação | Aplicação completa, último commit em 11/11/2026 (`ca0da80`) | **Repositório oficial.** Estava vazio até 14/11/2026 |
 | Conteúdo | Backend Python, backend TypeScript, painel, testes, documentos | As 11 skills de referência e os documentos das Fases 01 e 02 |
 
-Há também, no `Tradingfloor`, o branch `claude/install-day-trader-skills`, criado por engano nesta sessão antes de você indicar o repositório oficial. O `main` de lá não foi tocado.
+Há também, no `Tradingfloor`, o branch `claude/install-day-trader-skills` (commit `ad618576`), criado por engano nesta sessão antes de você indicar o repositório oficial. Ele contém uma cópia das skills e não está no `main`, que não foi tocado. A sessão tentou apagá-lo e o proxy recusou a escrita; a remoção precisa ser feita manualmente no GitHub, na aba Branches.
 
 ## 2. O que existe no Tradingfloor
 
@@ -31,10 +31,11 @@ Há também, no `Tradingfloor`, o branch `claude/install-day-trader-skills`, cri
 | Testes do Worker TypeScript (`vitest`) | 39 aprovados, incluindo paridade numérica com o Python |
 | Checagem de tipos do painel | Sem erros |
 | Compilação do painel | Concluída (site estático) |
+| Checagem de tipos do Worker (`tsc --noEmit` em `cloudflare/`) | **Falha** com TS2688: falta o arquivo gerado `worker-configuration.d.ts`. Não corrigido, para não alterar o `Tradingfloor` |
 | Uso de biblioteca do TradingView ou Lightweight Charts | Nenhum; os gráficos são componentes próprios |
 | Provedor de IA | Google Gemini, só na leitura de imagem; a chave nunca foi configurada |
 
-Não verifiquei o que está publicado na Cloudflare, na Netlify ou na Vercel, nem executei nada contra a Binance.
+Não verifiquei o que está publicado na Cloudflare ou na Netlify, nem executei nada contra a Binance. Na Vercel, verifiquei apenas a lista de projetos (ver `SETUP_CONTAS.md`).
 
 ## 4. Diferenças em relação ao Master Prompt 2.0
 
@@ -98,4 +99,5 @@ Nenhuma funcionalidade é apagada: o `Tradingfloor` permanece como está. O que 
 - **Sem login.** Há uma única senha de administrador. Não serve para vários usuários.
 - **Leitura de imagem nunca foi usada de verdade.** O código existe e tem testes, mas a chave do Gemini não foi configurada; não há medição de qualidade nem de tempo.
 - **Estratégia não validada.** Os documentos de lá registram que a simulação ao vivo ficou levemente negativa.
-- **Documentos desatualizados.** `FASES.md` cita 101 testes Python e 36 do Worker; hoje são 101 (um pulado sem PostgreSQL) e 39.
+- **Documentos desatualizados.** `FASES.md` cita 101 testes Python e 36 do Worker; medido hoje: 100 aprovados e 1 pulado (sem PostgreSQL), e 39 do Worker.
+- **Tipos do Worker não compilam.** `tsc --noEmit` em `cloudflare/` falha por falta do arquivo gerado `worker-configuration.d.ts`. O comando `wrangler types` gera esse arquivo. Não foi corrigido nesta fase.

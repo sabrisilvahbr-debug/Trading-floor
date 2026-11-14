@@ -22,7 +22,9 @@ Registra o que entrou neste repositório vindo de terceiros e toda alteração f
 ## 14/11/2026 — Fase 02: auditoria do Tradingfloor e arquitetura
 
 - `docs/TRADINGFLOOR_AUDIT.md`, `docs/ARCHITECTURE.md`, `docs/SETUP_CONTAS.md`, `docs/FASE_02_RELATORIO.md`; decisões D14 a D24 em `docs/TECHNICAL_DECISIONS.md`.
-- O repositório `Tradingfloor` foi lido e testado em uma cópia separada. Nenhum arquivo dele foi alterado.
+- O repositório `Tradingfloor` foi lido e testado em uma cópia separada. O `main` dele não foi alterado.
+- Um branch criado por engano, `claude/install-day-trader-skills` (commit `ad618576`), foi publicado no `Tradingfloor`. Ele não está no `main`. A sessão tentou apagá-lo e o proxy recusou a escrita; a remoção precisa ser feita manualmente no GitHub, na aba Branches.
+- Os commits das Fases 01 e 02 foram feitos direto no `main` do `Trading-floor`. A partir desta correção, as alterações vão para um branch próprio.
 - Nenhum código foi copiado do `Tradingfloor` ainda. A cópia começa na Fase 04 e cada arquivo trazido será listado aqui com o commit de origem (`ca0da80`).
 
 ## Situação das skills em relação à aplicação
