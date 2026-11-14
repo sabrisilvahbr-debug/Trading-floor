@@ -2,7 +2,7 @@
 //
 // Adaptado de cloudflare/src/vision.ts do repositório Tradingfloor (commit ca0da80):
 // validação da entrada e tratamento de erros vieram de lá; o provedor passou do Gemini
-// para a Claude API, a conferência com a Binance saiu (OTC não tem cotação pública) e
+// para a Claude API, a conferência com a Binance saiu e
 // entrou a classificação COMPRA / VENDA / NEUTRO com validador em código.
 //
 // Regras:
@@ -97,13 +97,13 @@ export function parseVisionInput(body: unknown): VisionInput {
   return { imageBase64: data, mimeType: mime as AllowedMime, note };
 }
 
-export const PROMPT = `Você recebe a captura de tela de um gráfico de velas (candles) de uma plataforma de negociação.
+export const PROMPT = `Você recebe a captura de tela de um gráfico de velas (candles) de uma ação negociada nos EUA.
 Descreva SOMENTE o que está visível. Não invente números, ativos nem indicadores que não aparecem.
 Responda APENAS com um objeto JSON, sem texto antes ou depois, neste formato:
 {
   "legible": true ou false (o gráfico de velas está nítido e legível?),
-  "asset": "nome do ativo escrito na tela" ou null,
-  "timeframe": "temporalidade escrita na tela, ex.: M1, M5" ou null,
+  "asset": "ticker da ação escrito na tela, ex.: AAPL" ou null,
+  "timeframe": "temporalidade escrita na tela, ex.: 5m, 1D" ou null,
   "trend": "alta" | "baixa" | "lateral" | "indefinida",
   "patterns": ["padrões de vela ou gráficos visíveis, em português, no máximo 5"],
   "criteria": [

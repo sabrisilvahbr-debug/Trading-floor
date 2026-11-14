@@ -74,7 +74,7 @@ export default function AnalisePage() {
   return (
     <main>
       <h1>Analisar gráfico</h1>
-      <p className="muted">Envie a captura de tela do gráfico de velas. A imagem é reduzida no aparelho e não fica guardada no servidor.</p>
+      <p className="muted">Envie a captura de tela do gráfico de velas de uma ação. A imagem é reduzida no aparelho e não fica guardada no servidor.</p>
 
       {!hasCode && (
         <div className="alert">
@@ -101,7 +101,7 @@ export default function AnalisePage() {
       <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => onFile(e.target.files?.[0])} />
 
       <label htmlFor="note">Observação (opcional)</label>
-      <textarea id="note" maxLength={300} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ex.: ativo EUR/USD OTC, velas de 1 minuto" />
+      <textarea id="note" maxLength={300} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ex.: AAPL, candles de 5 minutos" />
 
       <div style={{ height: 12 }} />
       <button className="btn" onClick={analyze} disabled={!image || busy}>
@@ -126,10 +126,13 @@ export default function AnalisePage() {
           <p className="muted">
             Modelo {result.model} · {(result.elapsed_ms / 1000).toFixed(1)} s{savedId ? " · salvo no histórico" : " · não foi possível salvar no histórico"}
           </p>
-          {result.decision.signal !== "NEUTRO" && savedId && (
-            <Link className="btn ghost" href={`/simulacao?analise=${savedId}`}>
-              Registrar na simulação
+          {result.decision.signal === "COMPRA" && result.reading.asset && (
+            <Link className="btn ghost" href={`/trade?symbol=${encodeURIComponent(result.reading.asset)}`}>
+              Montar o trade com dados reais
             </Link>
+          )}
+          {result.decision.signal === "VENDA" && (
+            <p className="muted">O fluxo de trade é só de compra, como nas skills. Venda a descoberto está desligada.</p>
           )}
         </div>
       )}

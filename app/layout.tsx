@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Trading Mohamed Floor",
-  description: "Análise de gráficos por imagem e simulação. Sem operações reais.",
+  description: "Scanner, plano de trade e simulação de ações dos EUA, só em modo paper.",
   robots: { index: false, follow: false },
 };
 
@@ -21,11 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="shell">
           <header className="top">
             <span className="brand">TRADING MOHAMED FLOOR</span>
-            <span className="pill">Simulação</span>
+            <span className="pill">Paper · ações EUA</span>
           </header>
           {children}
           <p className="foot">
-            Ferramenta de estudo em modo de simulação. Não executa operações reais e não é recomendação de investimento.
+            Ferramenta de estudo em modo paper. Não envia ordens a corretora e não é recomendação de investimento. Cotações do Yahoo com atraso.
           </p>
         </div>
         <Nav />

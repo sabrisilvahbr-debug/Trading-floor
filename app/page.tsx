@@ -1,109 +1,145 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { store, type Analysis } from "@/lib/storage";
-import { summarize, type Summary } from "@/lib/stats";
+import { api, store, tradeStats, type PaperTrade } from "@/lib/storage";
 
 interface Status {
   analysis_ready: boolean;
   vision_key: boolean;
   access_code: boolean;
-  supabase: boolean;
-  provider: string | null;
-  model: string | null;
+  sec: boolean;
+  market: { nyDate: string; nyTime: string; open: boolean; reason: string };
+}
+interface Quote {
+  symbol: string;
+  price?: number | null;
+  changePct?: number | null;
+  time?: string | null;
+  error?: string;
 }
 
 export default function Home() {
   const [status, setStatus] = useState<Status | null>(null);
-  const [statusError, setStatusError] = useState(false);
-  const [analyses, setAnalyses] = useState<Analysis[]>([]);
-  const [summary, setSummary] = useState<Summary | null>(null);
-  const [hasCode, setHasCode] = useState(false);
+  const [quotes, setQuotes] = useState<Quote[] | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [trades, setTrades] = useState<PaperTrade[]>([]);
+  const [watch, setWatch] = useState<string[]>([]);
+  const [hasCode, setHasCode] = useState(true);
 
   useEffect(() => {
-    setAnalyses(store.analyses());
-    setSummary(summarize(store.simulations()));
-    setHasCode(Boolean(store.settings().accessCode));
+    const s = store.settings();
+    setWatch(s.watchlist);
+    setHasCode(Boolean(s.accessCode));
+    setTrades(store.trades());
     fetch("/api/status", { cache: "no-store" })
       .then((r) => r.json())
       .then(setStatus)
-      .catch(() => setStatusError(true));
+      .catch(() => null);
+    if (s.watchlist.length && s.accessCode) {
+      api<{ quotes: Quote[] }>(`/api/market/quote?symbols=${s.watchlist.slice(0, 20).join(",")}`)
+        .then((d) => setQuotes(d.quotes))
+        .catch((e) => setQuoteError(e.message));
+    }
   }, []);
 
-  const counts = { COMPRA: 0, VENDA: 0, NEUTRO: 0 };
-  analyses.forEach((a) => (counts[a.decision.signal] += 1));
+  const stats = tradeStats(trades, status?.market.nyDate ?? "");
+  const open = trades.filter((t) => t.status === "aberta");
 
   return (
     <main>
       <h1>Painel</h1>
 
-      {statusError && <div className="alert err">Não foi possível consultar o servidor.</div>}
-      {status && !status.analysis_ready && (
-        <div className="alert">
-          A análise ainda não está ligada no servidor.{" "}
-          {!status.vision_key && "Falta a chave do Gemini (GEMINI_API_KEY). "}
-          {!status.access_code && "Falta o código de acesso (APP_ACCESS_CODE). "}
-          Configure em Vercel → Settings → Environment Variables e publique de novo.
-        </div>
-      )}
-      {status?.analysis_ready && !hasCode && (
-        <div className="alert">
-          Digite o código de acesso em <Link href="/ajustes">Ajustes</Link> para poder analisar.
+      {status && (
+        <div className="card">
+          <div className="row">
+            <div>
+              <strong>NYSE {status.market.open ? "aberta" : "fechada"}</strong>
+              <div className="muted">
+                Nova York {status.market.nyTime} · {status.market.reason}
+              </div>
+            </div>
+            <span className={`tag ${status.market.open ? "alta" : "neutro"}`} style={{ flex: "0 0 auto" }}>
+              {status.market.open ? "pregão" : "fora"}
+            </span>
+          </div>
         </div>
       )}
 
-      <Link href="/analise" className="btn" style={{ marginBottom: 14 }}>
-        Analisar gráfico
-      </Link>
+      {status && !status.access_code && <div className="alert">Falta configurar APP_ACCESS_CODE na Vercel. Sem ele, nada que busca dados funciona.</div>}
+      {status?.access_code && !hasCode && (
+        <div className="alert">
+          Digite o código de acesso em <Link href="/ajustes">Ajustes</Link>.
+        </div>
+      )}
+      {status && !status.sec && <div className="alert">Notícias da SEC e balanços precisam de SEC_USER_AGENT na Vercel (seu nome e um e-mail de contato).</div>}
+
+      <div className="grid2" style={{ marginBottom: 14 }}>
+        <Link href="/scanner" className="btn">
+          Scanner
+        </Link>
+        <Link href="/trade" className="btn ghost">
+          Novo trade
+        </Link>
+      </div>
 
       <div className="grid2" style={{ marginBottom: 14 }}>
         <div className="stat">
-          <b>{analyses.length}</b>
-          <span>análises</span>
+          <b>{open.length}</b>
+          <span>posições paper abertas</span>
         </div>
         <div className="stat">
-          <b>
-            {counts.COMPRA} / {counts.VENDA} / {counts.NEUTRO}
-          </b>
-          <span>compra / venda / neutro</span>
+          <b>US$ {stats.realized.toFixed(2)}</b>
+          <span>resultado paper fechado</span>
         </div>
         <div className="stat">
-          <b>{summary?.winRate == null ? "—" : `${Math.round(summary.winRate * 100)}%`}</b>
-          <span>acerto na simulação</span>
+          <b>{stats.winRate == null ? "—" : `${Math.round(stats.winRate * 100)}%`}</b>
+          <span>
+            trades no lucro ({stats.wins}/{stats.closed})
+          </span>
         </div>
         <div className="stat">
-          <b>{summary ? summary.net.toFixed(2) : "—"}</b>
-          <span>resultado simulado</span>
+          <b>US$ {stats.todayRisk.toFixed(2)}</b>
+          <span>risco aberto hoje</span>
         </div>
       </div>
 
       <div className="card">
-        <h2>Últimas análises</h2>
-        {analyses.length === 0 ? (
-          <p className="muted">Nenhuma análise ainda. Envie a captura de um gráfico para começar.</p>
+        <h2>Lista de observação</h2>
+        {watch.length === 0 ? (
+          <p className="muted">
+            Vazia. Adicione tickers em <Link href="/ajustes">Ajustes</Link>.
+          </p>
+        ) : quoteError ? (
+          <div className="alert err">{quoteError}</div>
+        ) : !quotes ? (
+          <p className="muted">{hasCode ? "Buscando cotações…" : "Digite o código de acesso para ver as cotações."}</p>
         ) : (
           <ul className="clean">
-            {analyses.slice(0, 5).map((a) => (
-              <li key={a.id} className="row">
-                {a.thumbnail ? <img className="thumb" src={a.thumbnail} alt="" /> : <span className="thumb" />}
-                <div>
-                  <span className={`tag ${a.decision.signal}`}>{a.decision.signal}</span>{" "}
-                  {a.reading.asset ?? "Ativo não identificado"}
-                  <div className="muted">{new Date(a.createdAt).toLocaleString("pt-BR")}</div>
-                </div>
+            {quotes.map((q) => (
+              <li key={q.symbol} className="row">
+                <Link href={`/pesquisa?symbol=${q.symbol}`}>
+                  <strong>{q.symbol}</strong>
+                </Link>
+                {q.error ? (
+                  <span className="muted">{q.error}</span>
+                ) : (
+                  <span style={{ textAlign: "right" }}>
+                    US$ {q.price?.toFixed(2) ?? "—"}{" "}
+                    {q.changePct != null && (
+                      <span className={`tag ${q.changePct >= 0 ? "alta" : "baixa"}`}>
+                        {q.changePct >= 0 ? "+" : ""}
+                        {q.changePct.toFixed(2)}%
+                      </span>
+                    )}
+                  </span>
+                )}
               </li>
             ))}
           </ul>
         )}
-      </div>
-
-      <div className="card">
-        <h2>Situação</h2>
-        <ul className="clean">
-          <li>Modo: simulação, sem operações reais</li>
-          <li>Leitura por imagem: {status ? (status.analysis_ready ? `ligada (${status.model})` : "desligada") : "…"}</li>
-          <li>Login e banco (Supabase): {status ? (status.supabase ? "configurado" : "ainda não; dados ficam neste aparelho") : "…"}</li>
-        </ul>
+        <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+          Fonte: Yahoo Finance, com atraso.
+        </p>
       </div>
     </main>
   );

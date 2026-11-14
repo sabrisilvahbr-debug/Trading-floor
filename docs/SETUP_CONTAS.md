@@ -26,6 +26,8 @@ O app já está publicado em https://tradingo-floor.vercel.app, no projeto `trad
 
 `GEMINI_MODEL` é opcional (padrão `gemini-2.5-flash`).
 
+Para notícias da SEC e balanços, adicione também `SEC_USER_AGENT` com seu nome e um e-mail de contato, por exemplo `Maria Silva maria@exemplo.com`. A SEC exige essa identificação; sem ela, essas duas funções ficam desligadas e o resto funciona.
+
 **Plano:** o gratuito (Hobby) só permite uso pessoal, sem fins comerciais. Com outros usuários ou cobrança, é preciso o Pro, de US$ 20 por usuário por mês.
 
 **Atenção:** os projetos `tradingfloor` e `tradingfloor-57dr` pertencem ao outro repositório e não devem ser apagados nem reutilizados. O projeto `tradingo-floor` (com "o" a mais, nome mantido de propósito) é o deste repositório; o anterior, `trading-floorby`, foi excluído.

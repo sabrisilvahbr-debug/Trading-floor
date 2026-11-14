@@ -1,119 +1,115 @@
 "use client";
 import { useEffect, useState } from "react";
-import { store, type AssetSetting, type Settings } from "@/lib/storage";
+import { store, type Settings } from "@/lib/storage";
+import { DEFAULT_RULES, type Rules } from "@/lib/trading/rules";
+
+const NUM_FIELDS: { key: keyof Rules; label: string }[] = [
+  { key: "budget", label: "Orçamento (US$)" },
+  { key: "cashBufferPct", label: "Reserva de caixa (%)" },
+  { key: "maxPositionPct", label: "Posição máxima (% do orçamento)" },
+  { key: "maxOrderUsd", label: "Ordem máxima (US$)" },
+  { key: "minOrderUsd", label: "Ordem mínima (US$)" },
+  { key: "maxLossPerTradeUsd", label: "Perda máxima por trade (US$)" },
+  { key: "maxDailyLossUsd", label: "Perda máxima por dia (US$)" },
+  { key: "maxTradesPerDay", label: "Trades por dia" },
+  { key: "minRewardRisk", label: "Retorno/risco mínimo" },
+];
+const TIME_FIELDS: { key: keyof Rules; label: string }[] = [
+  { key: "noEntriesBefore", label: "Sem entradas antes de (NY)" },
+  { key: "noEntriesAfter", label: "Sem entradas depois de (NY)" },
+  { key: "flatBy", label: "Zerar até (NY)" },
+];
 
 export default function AjustesPage() {
-  const [settings, setSettings] = useState<Settings>({ accessCode: "", assets: [] });
-  const [saved, setSaved] = useState<string | null>(null);
-  const [asset, setAsset] = useState("");
-  const [exps, setExps] = useState("");
-  const [payout, setPayout] = useState("");
+  const [s, setS] = useState<Settings>({ accessCode: "", watchlist: [], rules: DEFAULT_RULES });
+  const [watchText, setWatchText] = useState("");
+  const [blockedText, setBlockedText] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
 
-  useEffect(() => setSettings(store.settings()), []);
+  useEffect(() => {
+    const cur = store.settings();
+    setS(cur);
+    setWatchText(cur.watchlist.join(", "));
+    setBlockedText(cur.rules.blocked.join(", "));
+  }, []);
 
-  function persist(next: Settings, msg: string) {
-    setSettings(next);
-    setSaved(store.saveSettings(next) ? msg : "Não foi possível salvar neste aparelho.");
-  }
+  const tickers = (t: string) => [...new Set(t.split(/[\s,;]+/).map((x) => x.trim().toUpperCase()).filter((x) => /^[A-Z][A-Z0-9.\-]{0,9}$/.test(x)))];
 
-  function addAsset(e: React.FormEvent) {
+  function save(e: React.FormEvent) {
     e.preventDefault();
-    const name = asset.trim();
-    if (!name) return;
-    const p = Number(payout.replace(",", "."));
-    const item: AssetSetting = {
-      asset: name,
-      expirations: exps
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean),
-      payoutPct: payout.trim() && p > 0 ? p : null,
-    };
-    const others = settings.assets.filter((a) => a.asset.toLowerCase() !== name.toLowerCase());
-    persist({ ...settings, assets: [...others, item].sort((a, b) => a.asset.localeCompare(b.asset)) }, "Ativo salvo.");
-    setAsset("");
-    setExps("");
-    setPayout("");
+    const next: Settings = { ...s, watchlist: tickers(watchText).slice(0, 30), rules: { ...s.rules, blocked: tickers(blockedText) } };
+    setS(next);
+    setWatchText(next.watchlist.join(", "));
+    setMsg(store.saveSettings(next) ? "Ajustes salvos neste aparelho." : "Não foi possível salvar neste aparelho.");
   }
+
+  const setRule = (k: keyof Rules, v: string | number) => setS({ ...s, rules: { ...s.rules, [k]: v } });
 
   return (
     <main>
       <h1>Ajustes</h1>
+      <form onSubmit={save}>
+        <div className="card">
+          <h2>Código de acesso</h2>
+          <p className="muted">O mesmo valor de APP_ACCESS_CODE na Vercel. Protege as buscas de dados e a análise de imagem.</p>
+          <input type="password" autoComplete="current-password" aria-label="Código de acesso" value={s.accessCode} onChange={(e) => setS({ ...s, accessCode: e.target.value })} />
+        </div>
 
-      <form
-        className="card"
-        onSubmit={(e) => {
-          e.preventDefault();
-          persist(settings, "Código salvo neste aparelho.");
-        }}
-      >
-        <h2>Código de acesso</h2>
-        <p className="muted">É o mesmo valor definido em APP_ACCESS_CODE na Vercel. Protege a análise, que tem custo por uso.</p>
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={settings.accessCode}
-          onChange={(e) => setSettings({ ...settings, accessCode: e.target.value })}
-          aria-label="Código de acesso"
-        />
-        <div style={{ height: 10 }} />
-        <button className="btn" type="submit">
-          Salvar código
-        </button>
-      </form>
+        <div className="card">
+          <h2>Lista de observação</h2>
+          <p className="muted">Até 30 tickers, separados por vírgula. Usada no Início e no Scanner.</p>
+          <textarea value={watchText} onChange={(e) => setWatchText(e.target.value)} placeholder="AAPL, MSFT, NVDA" />
+        </div>
 
-      <form className="card" onSubmit={addAsset}>
-        <h2>Ativos, expirações e payouts</h2>
-        <p className="muted">
-          Sem valores prontos: copie da plataforma o que ela mostra para cada ativo. Payouts mudam ao longo do dia; confira antes
-          de cada entrada.
-        </p>
-        <label htmlFor="a">Ativo</label>
-        <input id="a" value={asset} onChange={(e) => setAsset(e.target.value)} />
-        <label htmlFor="e">Expirações (separe por vírgula)</label>
-        <input id="e" value={exps} onChange={(e) => setExps(e.target.value)} />
-        <label htmlFor="p">Payout (%)</label>
-        <input id="p" inputMode="decimal" value={payout} onChange={(e) => setPayout(e.target.value)} />
-        <div style={{ height: 10 }} />
-        <button className="btn ghost" type="submit">
-          Salvar ativo
-        </button>
-        {settings.assets.length > 0 && (
-          <ul className="clean" style={{ marginTop: 12 }}>
-            {settings.assets.map((a) => (
-              <li key={a.asset} className="row">
-                <div>
-                  <strong>{a.asset}</strong>
-                  <div className="muted">
-                    {a.expirations.join(", ") || "sem expirações"} · {a.payoutPct == null ? "payout não informado" : `${a.payoutPct}%`}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="btn danger small"
-                  style={{ flex: "0 0 auto" }}
-                  onClick={() => persist({ ...settings, assets: settings.assets.filter((x) => x.asset !== a.asset) }, "Ativo removido.")}
-                >
-                  remover
-                </button>
-              </li>
+        <div className="card">
+          <h2>Limites de risco (paper)</h2>
+          <p className="muted">Os valores iniciais são os do trader/config.json das skills.</p>
+          <div className="grid2">
+            {NUM_FIELDS.map((f) => (
+              <div key={f.key}>
+                <label htmlFor={f.key}>{f.label}</label>
+                <input id={f.key} inputMode="decimal" value={String(s.rules[f.key])} onChange={(e) => setRule(f.key, Number(e.target.value.replace(",", ".")) || 0)} />
+              </div>
             ))}
-          </ul>
-        )}
+            {TIME_FIELDS.map((f) => (
+              <div key={f.key}>
+                <label htmlFor={f.key}>{f.label}</label>
+                <input id={f.key} value={String(s.rules[f.key])} onChange={(e) => setRule(f.key, e.target.value)} placeholder="HH:MM" />
+              </div>
+            ))}
+          </div>
+          <label htmlFor="bl">Tickers bloqueados</label>
+          <input id="bl" value={blockedText} onChange={(e) => setBlockedText(e.target.value)} />
+          <div style={{ height: 10 }} />
+          <button type="button" className="btn ghost small" onClick={() => setS({ ...s, rules: DEFAULT_RULES })}>
+            Voltar aos valores das skills
+          </button>
+        </div>
+
+        <button className="btn" type="submit">
+          Salvar
+        </button>
       </form>
 
-      {saved && <div className="alert">{saved}</div>}
+      {msg && (
+        <div className="alert" style={{ marginTop: 14 }}>
+          {msg}
+        </div>
+      )}
 
-      <div className="card">
+      <div className="card" style={{ marginTop: 14 }}>
         <h2>Dados deste aparelho</h2>
-        <p className="muted">Até o login com Supabase ser ligado, análises e simulações ficam só neste navegador.</p>
+        <p className="muted">Até o login com Supabase, análises, trades paper e ajustes ficam só neste navegador.</p>
         <button
           className="btn danger"
           onClick={() => {
-            if (window.confirm("Apagar análises, simulações e ajustes deste aparelho?")) {
+            if (window.confirm("Apagar análises, trades paper e ajustes deste aparelho?")) {
               store.clearAll();
-              setSettings(store.settings());
-              setSaved("Dados apagados.");
+              const cur = store.settings();
+              setS(cur);
+              setWatchText("");
+              setBlockedText("");
+              setMsg("Dados apagados.");
             }
           }}
         >

@@ -1,5 +1,7 @@
 # Arquitetura — Fase 02
 
+> **Atualização de 14/11/2026 (D30):** o produto deixou de tratar opções binárias e OTC e passou a analisar ações dos EUA com as regras das skills. As partes deste documento sobre OTC, expirações, payout, `assets`, `asset_settings` e `simulations` estão superadas. O desenho atual está em `docs/ACOES_EUA.md` e o banco em `supabase/migrations/0001_init.sql`.
+
 TRADING MOHAMED FLOOR · 14/11/2026 · Planejamento. Nenhum código de aplicação existe ainda neste repositório.
 
 Itens marcados **(pendente)** dependem das suas respostas no fim de `FASE_02_RELATORIO.md`.

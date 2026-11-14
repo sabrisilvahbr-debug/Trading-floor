@@ -121,3 +121,19 @@ Não existe cotação pública de ativos OTC. O app não busca preço em outra f
 ### D29 — Gemini como provedor da leitura · Decidida pelo dono (14/11)
 
 A leitura da imagem passa a usar a API do Gemini (`GEMINI_API_KEY`, modelo `gemini-2.5-flash` por padrão, ajustável em `GEMINI_MODEL`). A Claude API continua no código como alternativa: só é usada se `GEMINI_API_KEY` estiver vazia. Prompt e validador são os mesmos.
+
+### D30 — Ações dos EUA no lugar de OTC · Decidida pelo dono (14/11)
+
+O app passa a analisar só ações dos EUA, usando as regras das skills. OTC, expirações e payout saíram do app. Substitui o foco em opções binárias do Master Prompt e torna D19 e D28 sem efeito. A análise de gráfico por imagem continua, agora voltada a ações.
+
+### D31 — Yahoo Finance como fonte de cotação · Decidida pelo dono, ciente do risco (14/11)
+
+É a fonte das skills: gratuita, com atraso, sem API oficial nem documentação. Pode mudar ou bloquear sem aviso. O app sempre mostra a fonte e nunca preenche um valor que não veio. SEC EDGAR e House Clerk são fontes oficiais e públicas.
+
+### D32 — Regras das skills portadas para TypeScript · Decidida (14/11)
+
+Scanner, entrada por opening range, stop e alvo, Time Machine, tamanho e risco, notícias, balanços e índice do Congresso foram reescritos em TypeScript para rodar na Vercel. A paridade com o Python foi conferida: RSI e setups por testes com casos gerados pelo script da skill; Time Machine com os mesmos 60 dias reais de AAPL (histórico idêntico; Monte Carlo dentro do ruído, porque o gerador aleatório é outro). A skill de corretora (trader-broker) não entrou: o app não envia ordens.
+
+### D33 — Congresso sem leitura dos PDFs · Decidida (14/11)
+
+O app lista os PTRs do índice oficial da Câmara e abre o PDF oficial. Ler as linhas dos PDFs (como faz ptr.py) fica para depois. O Senado não está incluído.
