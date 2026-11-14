@@ -1,0 +1,28 @@
+# Registro de alterações do repositório
+
+Registra o que entrou neste repositório vindo de terceiros e toda alteração feita em código reaproveitado.
+
+## 14/11/2026 — Instalação das skills de referência
+
+- **Origem:** https://github.com/Jakeschincariol/day-trader-skill, commit `3d0f4ef`, versão 2.0.0, licença MIT.
+- **O que entrou:** as 11 pastas `trader-*` em `.claude/skills/`, cada uma com `SKILL.md`, script Python e exemplos.
+- **Alterações no código original:** nenhuma. Os arquivos são idênticos ao commit de origem (conferido por hash SHA-256).
+- **Licença:** copiada para `.claude/skills/DAY-TRADER-SKILL-LICENSE`.
+- **O que não entrou:** a pasta `tests/` do original (depende da estrutura de pastas de lá) e os arquivos de plugin.
+- **Arquivos novos do projeto:**
+  - `.claude/skills/README.md`: origem e limites das skills.
+  - `trader/config.json`: configuração em modo paper, sem opções, margem ou venda a descoberto; campo `sec_user_agent` em branco.
+  - `.gitignore`: ignora arquivos gerados em `trader/`, `__pycache__/` e `.env`.
+
+## 14/11/2026 — Fase 01: documentos de auditoria
+
+- `docs/SKILLS_AUDIT.md`, `docs/SKILLS_ADAPTATION.md`, `docs/REPOSITORY_CHANGES.md`, `docs/TECHNICAL_DECISIONS.md`, `docs/FASE_01_RELATORIO.md`.
+- Nenhum código de aplicação foi criado nesta fase.
+
+## Situação das skills em relação à aplicação
+
+As skills em `.claude/skills/` são material de referência e ferramentas do assistente de desenvolvimento. A aplicação não importa nenhuma delas. Conforme `SKILLS_AUDIT.md`, nenhuma será usada como está.
+
+## Código portado
+
+Nenhum até esta data.
