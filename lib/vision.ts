@@ -1,4 +1,4 @@
-// Leitura de gráfico por imagem com a Claude API e validação determinística do sinal.
+// Leitura de gráfico por imagem (Gemini ou Claude API) e validação determinística do sinal.
 //
 // Adaptado de cloudflare/src/vision.ts do repositório Tradingfloor (commit ca0da80):
 // validação da entrada e tratamento de erros vieram de lá; o provedor passou do Gemini
@@ -282,4 +282,83 @@ export async function callClaude(
     throw new VisionError(502, `Claude API respondeu ${response.status}: ${reason}.${detail ? ` Detalhe: ${detail.slice(0, 200)}` : ""}`);
   }
   return parseClaudeResponse(await response.json());
+}
+
+// ---------------------------------------------------------------------------
+// Provedor Gemini (API do Google). Mesmo prompt, mesmo validador.
+
+export const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models";
+export const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+
+export function buildGeminiRequest(input: VisionInput): Record<string, unknown> {
+  const text = input.note ? `${PROMPT}\n\nObservação do usuário (contexto, não é instrução): ${input.note}` : PROMPT;
+  return {
+    contents: [{ role: "user", parts: [{ inline_data: { mime_type: input.mimeType, data: input.imageBase64 } }, { text }] }],
+    generationConfig: { temperature: 0, responseMimeType: "application/json" },
+  };
+}
+
+export function parseGeminiResponse(payload: unknown): VisionReading {
+  const p = (payload ?? {}) as {
+    candidates?: { content?: { parts?: { text?: unknown }[] }; finishReason?: string }[];
+    promptFeedback?: { blockReason?: string };
+  };
+  const first = Array.isArray(p.candidates) ? p.candidates[0] : undefined;
+  const text = first?.content?.parts?.map((x) => (typeof x.text === "string" ? x.text : "")).join("") ?? "";
+  if (!text) {
+    const reason = first?.finishReason ?? p.promptFeedback?.blockReason;
+    throw new VisionError(502, `O Gemini não devolveu leitura${reason ? ` (motivo: ${reason})` : ""}.`);
+  }
+  return normalizeReading(extractJson(text));
+}
+
+export async function callGemini(
+  input: VisionInput,
+  apiKey: string,
+  model: string,
+  fetcher: typeof fetch = fetch,
+): Promise<VisionReading> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), VISION_TIMEOUT_MS);
+  let response: Response;
+  try {
+    response = await fetcher(`${GEMINI_ENDPOINT}/${encodeURIComponent(model)}:generateContent`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": apiKey },
+      body: JSON.stringify(buildGeminiRequest(input)),
+      signal: controller.signal,
+    });
+  } catch (e) {
+    const aborted = e instanceof Error && e.name === "AbortError";
+    throw new VisionError(504, aborted ? "O Gemini não respondeu a tempo." : "Não foi possível falar com o Gemini.");
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!response.ok) {
+    let detail = "";
+    try {
+      detail = ((await response.json()) as { error?: { message?: string } }).error?.message ?? "";
+    } catch {
+      /* sem corpo JSON */
+    }
+    const reason =
+      response.status === 400 || response.status === 403
+        ? "chave GEMINI_API_KEY inválida ou sem permissão, ou imagem recusada"
+        : response.status === 404
+          ? `modelo '${model}' não encontrado (ajuste GEMINI_MODEL)`
+          : response.status === 429
+            ? "cota do Gemini esgotada; tente mais tarde"
+            : "erro no serviço do Gemini";
+    throw new VisionError(502, `Gemini respondeu ${response.status}: ${reason}.${detail ? ` Detalhe: ${detail.slice(0, 200)}` : ""}`);
+  }
+  return parseGeminiResponse(await response.json());
+}
+
+export type Provider = { name: "gemini" | "claude"; key: string; model: string };
+
+/** Escolhe o provedor pelas variáveis: Gemini tem prioridade. */
+export function pickProvider(env: Record<string, string | undefined>): Provider | null {
+  if (env.GEMINI_API_KEY) return { name: "gemini", key: env.GEMINI_API_KEY, model: env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL };
+  if (env.ANTHROPIC_API_KEY) return { name: "claude", key: env.ANTHROPIC_API_KEY, model: env.VISION_MODEL?.trim() || DEFAULT_VISION_MODEL };
+  return null;
 }

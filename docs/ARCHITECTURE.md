@@ -138,7 +138,9 @@ As versões exatas serão fixadas na Fase 04, no momento da instalação.
 | `NEXT_PUBLIC_SUPABASE_URL` | Vercel | Sim (é pública por natureza) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Vercel | Sim (é pública por natureza) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Vercel | **Não** |
-| `ANTHROPIC_API_KEY` | Vercel | **Não** |
+| `GEMINI_API_KEY` | Vercel | **Não** |
+| `GEMINI_MODEL` | Vercel | Não |
+| `ANTHROPIC_API_KEY` | Vercel (alternativa) | **Não** |
 | `VISION_MODEL` | Vercel | Não |
 | `APP_ACCESS_CODE` | Vercel | **Não** (o usuário digita no app; o servidor compara) |
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { accessGranted } from "@/lib/access";
-import { DEFAULT_VISION_MODEL, VisionError, callClaude, decideSignal, parseVisionInput } from "@/lib/vision";
+import { VisionError, callClaude, callGemini, decideSignal, parseVisionInput, pickProvider } from "@/lib/vision";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -11,13 +11,13 @@ function error(status: number, message: string) {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
   const accessCode = process.env.APP_ACCESS_CODE;
   if (!accessCode) return error(503, "Análise desligada: falta configurar APP_ACCESS_CODE na Vercel.");
   if (!accessGranted(request.headers.get("x-access-code"), accessCode)) {
     return error(401, "Código de acesso inválido. Confira em Ajustes.");
   }
-  if (!apiKey) return error(503, "Análise desligada: falta configurar ANTHROPIC_API_KEY na Vercel.");
+  const provider = pickProvider(process.env);
+  if (!provider) return error(503, "Análise desligada: falta configurar GEMINI_API_KEY na Vercel.");
 
   let body: unknown;
   try {
@@ -26,14 +26,16 @@ export async function POST(request: Request) {
     return error(400, "Corpo da requisição inválido.");
   }
 
-  const model = process.env.VISION_MODEL?.trim() || DEFAULT_VISION_MODEL;
   try {
     const input = parseVisionInput(body);
     const started = Date.now();
-    const reading = await callClaude(input, apiKey, model);
+    const reading =
+      provider.name === "gemini"
+        ? await callGemini(input, provider.key, provider.model)
+        : await callClaude(input, provider.key, provider.model);
     const decision = decideSignal(reading);
     return NextResponse.json(
-      { model, elapsed_ms: Date.now() - started, reading, decision },
+      { model: provider.model, provider: provider.name, elapsed_ms: Date.now() - started, reading, decision },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (e) {

@@ -134,3 +134,37 @@ describe("callClaude", () => {
     expect(() => parseClaudeResponse({ content: [] })).toThrow(VisionError);
   });
 });
+
+import { callGemini, pickProvider } from "../lib/vision";
+
+describe("Gemini", () => {
+  const input = { imageBase64: "QUJD", mimeType: "image/jpeg" as const, note: "" };
+  it("envia imagem e chave e lê a resposta", async () => {
+    let url = "";
+    let init: RequestInit = {};
+    const fake = (async (u: string, i: RequestInit) => {
+      url = u;
+      init = i;
+      return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(base) }] } }] }), { status: 200 });
+    }) as unknown as typeof fetch;
+    const r = await callGemini(input, "g", "gemini-2.5-flash", fake);
+    expect(r.suggested).toBe("COMPRA");
+    expect(url).toBe("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent");
+    expect((init.headers as Record<string, string>)["x-goog-api-key"]).toBe("g");
+    expect(JSON.parse(String(init.body)).contents[0].parts[0].inline_data.data).toBe("QUJD");
+  });
+  it("403 vira mensagem sobre a chave", async () => {
+    const fake = (async () => new Response("{}", { status: 403 })) as unknown as typeof fetch;
+    await expect(callGemini(input, "g", "m", fake)).rejects.toThrow(/GEMINI_API_KEY/);
+  });
+  it("resposta bloqueada vira erro claro", async () => {
+    const fake = (async () => new Response(JSON.stringify({ promptFeedback: { blockReason: "SAFETY" } }), { status: 200 })) as unknown as typeof fetch;
+    await expect(callGemini(input, "g", "m", fake)).rejects.toThrow(/SAFETY/);
+  });
+});
+
+describe("pickProvider", () => {
+  it("prefere Gemini", () => expect(pickProvider({ GEMINI_API_KEY: "g", ANTHROPIC_API_KEY: "a" })?.name).toBe("gemini"));
+  it("usa Claude se só ela existir", () => expect(pickProvider({ ANTHROPIC_API_KEY: "a" })?.name).toBe("claude"));
+  it("nenhum sem chaves", () => expect(pickProvider({})).toBeNull());
+});

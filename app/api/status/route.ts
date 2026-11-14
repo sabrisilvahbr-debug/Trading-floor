@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
-import { DEFAULT_VISION_MODEL, RULES } from "@/lib/vision";
+import { RULES, pickProvider } from "@/lib/vision";
 
 export const dynamic = "force-dynamic";
 
 /** Diz o que está configurado, sem revelar nenhum valor secreto. */
 export async function GET() {
+  const provider = pickProvider(process.env);
   return NextResponse.json(
     {
-      analysis_ready: Boolean(process.env.ANTHROPIC_API_KEY && process.env.APP_ACCESS_CODE),
-      anthropic_key: Boolean(process.env.ANTHROPIC_API_KEY),
+      analysis_ready: Boolean(provider && process.env.APP_ACCESS_CODE),
+      provider: provider?.name ?? null,
+      vision_key: Boolean(provider),
       access_code: Boolean(process.env.APP_ACCESS_CODE),
       supabase: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-      model: process.env.VISION_MODEL?.trim() || DEFAULT_VISION_MODEL,
+      model: provider?.model ?? null,
       rules: RULES,
       mode: "simulação",
     },

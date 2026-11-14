@@ -20,11 +20,11 @@ O app já está publicado em https://tradingo-floor.vercel.app, no projeto `trad
 1. Entre em vercel.com, abra o projeto **tradingo-floor**.
 2. Vá em **Settings** → **Environment Variables**.
 3. Adicione `APP_ACCESS_CODE` com um código que só você saiba (uma frase longa serve). Marque **Production** e **Preview**.
-4. Adicione `ANTHROPIC_API_KEY` com a chave criada no passo 3 deste guia. Marque **Production** e **Preview**.
+4. Adicione `GEMINI_API_KEY` com a chave criada no passo 3 deste guia. Marque **Production** e **Preview**.
 5. Vá em **Deployments**, abra o último, clique nos três pontos e em **Redeploy**. Variáveis novas só valem depois de publicar de novo.
 6. No app, abra **Ajustes** e digite o mesmo código de acesso.
 
-`VISION_MODEL` é opcional (padrão `claude-sonnet-5-5`).
+`GEMINI_MODEL` é opcional (padrão `gemini-2.5-flash`).
 
 **Plano:** o gratuito (Hobby) só permite uso pessoal, sem fins comerciais. Com outros usuários ou cobrança, é preciso o Pro, de US$ 20 por usuário por mês.
 
@@ -51,16 +51,16 @@ O login no app ainda não está ligado; isso será feito na próxima fase de des
 
 **Plano:** o gratuito custa US$ 0 e serve para começar. Segundo as páginas de preço consultadas em novembro de 2026, ele tem 500 MB de banco e **pausa o projeto depois de 7 dias sem uso**. O Pro parte de US$ 25 por mês. Confira em supabase.com/pricing antes de decidir.
 
-## 3. Anthropic (Claude API) — necessária para a análise
+## 3. Gemini (API do Google) — necessária para a análise
 
-A API é paga por uso e separada da assinatura do Claude.
+1. Entre em aistudio.google.com com sua conta Google.
+2. Clique em **Get API key** e depois em **Create API key**.
+3. Copie a chave e cole direto na Vercel, na variável `GEMINI_API_KEY`.
+4. Não cole a chave no chat. Se colar por engano, apague a chave no AI Studio e crie outra.
 
-1. Entre em console.anthropic.com e crie a conta (ou entre, se já tiver).
-2. Abra **Billing** e adicione créditos. Um valor pequeno basta para os testes: a estimativa é de menos de US$ 0,02 por análise no modelo intermediário.
-3. Em **Limits**, defina um teto de gasto mensal, para não haver surpresa.
-4. Abra **API Keys** e clique em **Create Key**. Dê o nome `trading-mohamed-floor`.
-5. A chave aparece **uma única vez**. Copie e cole direto na Vercel, na variável `ANTHROPIC_API_KEY`.
-6. Não cole a chave no chat. Se colar por engano, apague a chave no console e crie outra.
+Confira no AI Studio os limites do plano gratuito e o preço do pago antes de usar muito.
+
+A Claude API (console.anthropic.com, variável `ANTHROPIC_API_KEY`) continua possível como alternativa.
 
 ## O que você precisa me dizer em cada fase
 

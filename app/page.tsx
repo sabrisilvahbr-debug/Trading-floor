@@ -6,10 +6,11 @@ import { summarize, type Summary } from "@/lib/stats";
 
 interface Status {
   analysis_ready: boolean;
-  anthropic_key: boolean;
+  vision_key: boolean;
   access_code: boolean;
   supabase: boolean;
-  model: string;
+  provider: string | null;
+  model: string | null;
 }
 
 export default function Home() {
@@ -40,7 +41,7 @@ export default function Home() {
       {status && !status.analysis_ready && (
         <div className="alert">
           A análise ainda não está ligada no servidor.{" "}
-          {!status.anthropic_key && "Falta a chave da Claude API (ANTHROPIC_API_KEY). "}
+          {!status.vision_key && "Falta a chave do Gemini (GEMINI_API_KEY). "}
           {!status.access_code && "Falta o código de acesso (APP_ACCESS_CODE). "}
           Configure em Vercel → Settings → Environment Variables e publique de novo.
         </div>

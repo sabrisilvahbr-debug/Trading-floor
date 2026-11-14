@@ -84,7 +84,7 @@ Ficam vazios até o usuário informar o que a plataforma mostra. Sem payout info
 
 Plano gratuito no início. Ele pausa o projeto após 7 dias sem uso; o plano Pro parte de US$ 25 por mês.
 
-### D21 — Claude API no lugar do Gemini · Decidida
+### D21 — Claude API no lugar do Gemini · Substituída por D29
 
 O Master Prompt 2.0 é mais recente que a decisão de 11/11 do `Tradingfloor`. O módulo de visão terá o provedor isolado em um arquivo, para permitir troca.
 
@@ -117,3 +117,7 @@ A IA descreve a imagem e lista critérios; o código decide. Só sai COMPRA ou V
 ### D28 — Resultado da simulação marcado pelo usuário · Decidida (14/11)
 
 Não existe cotação pública de ativos OTC. O app não busca preço em outra fonte; o usuário marca acerto, erro ou empate olhando a plataforma.
+
+### D29 — Gemini como provedor da leitura · Decidida pelo dono (14/11)
+
+A leitura da imagem passa a usar a API do Gemini (`GEMINI_API_KEY`, modelo `gemini-2.5-flash` por padrão, ajustável em `GEMINI_MODEL`). A Claude API continua no código como alternativa: só é usada se `GEMINI_API_KEY` estiver vazia. Prompt e validador são os mesmos.
